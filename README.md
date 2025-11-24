@@ -3,7 +3,9 @@ TinyCoT is a lightweight TCP relay server for ATAK/CoT clients. It supports mult
 
 Everything will be here soon. TinyCot was created to run on hardware with limited resources. It's not a replacement for enterprise-grade TAK servers and doesn't attempt to compete with them. At the moment there's no TLS support for clients because... I don't need it. :)
 
-## ASCII diagram of TinyCoT's main structures and goroutines (functions)
+### ASCII diagram of TinyCoT's main structures and goroutines (functions)
+<details>
+  <summary>See below</summary>
 <pre>
                          ┌──────────────┐
                          │   OS Signal  │
@@ -54,15 +56,15 @@ Everything will be here soon. TinyCot was created to run on hardware with limite
 │ Files on Disk │
 │ hash.zip      │
 └───────────────┘
+</details>
 
-Legend / Notes:
-----------------
-- Each client connection => 1 handleConn goroutine + 1 sender goroutine + 1 heartbeat ticker.
-- sendChan[200] buffers messages to client; if client is slow, memory can grow (200*msg size).
-- buf String in handleConn uses string concatenation; large messages → more GC pressure.
+#### Legend / Notes
+- Each client connection => 1 <code>handleConn</code> goroutine + 1 <code>sender</code> goroutine + 1 heartbeat ticker.
+- <code>sendChan[200]</code> buffers messages to client; if client is slow, memory can grow (200*msg size).
+- <code>buf</code> String in <code>handleConn</code> uses string concatenation; large messages → more GC pressure.
 - DP uploads use temp file + streaming hash → memory efficient even for large files.
-- dpMap in Server stores DP metadata in memory; scales with number of packages.
-- SQLite persists DPInfo; modernc.org/sqlite is fully Go → safe for ARM64.
+- <code>dpMap</code> in <code>Server</code> stores DP metadata in memory; scales with number of packages.
+- SQLite persists <code>DPInfo</code>; <code>modernc.org/sqlite</code> is fully Go → safe for ARM64.
 - Graceful shutdown closes all connections, stops tickers and goroutines.
 </pre>
 
